@@ -14,7 +14,14 @@
                 </div>
                 <div class="card-body">
                     <p>This is your profile page.</p>
-                </div>
+                    <div class="d-grid mt-3">
+                        <form th:action="@{/logout}" method="post">
+                        <!-- Thymeleaf will expose the CSRF attributes here -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>

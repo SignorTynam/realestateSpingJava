@@ -1,5 +1,7 @@
 package com.realestate.realestate.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -40,7 +44,12 @@ public class SecurityConfig {
         http
           .authenticationProvider(authenticationProvider())
           .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/signup", "/css/**").permitAll()
+              .requestMatchers(
+                  "/signup",
+                  "/css/**",
+                  "/error",      // <-- allow Spring’s error handler
+                  "/error/**"    // <-- in case you have static/error assets
+              ).permitAll()
               .anyRequest().authenticated()
           )
           .formLogin(form -> form
@@ -49,7 +58,15 @@ public class SecurityConfig {
               .failureUrl("/login-error")
               .permitAll()
           )
-          .logout(logout -> logout.permitAll());
+          .logout(logout -> logout
+              .logoutUrl("/logout")
+              .logoutSuccessUrl("/login")
+              .invalidateHttpSession(true)
+              .deleteCookies("JSESSIONID")
+              .addLogoutHandler((request, response, authentication) -> {
+                  logger.info("User logged out: {}", authentication != null ? authentication.getName() : "Anonymous");
+              })
+              .permitAll());
 
         return http.build();
     }
