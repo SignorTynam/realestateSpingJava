@@ -1,6 +1,8 @@
 package com.realestate.realestate.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class User {
@@ -9,6 +11,9 @@ public class User {
     private Long id;
     private String username;
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Property> properties;
 
     public User() {
     }
@@ -37,5 +42,15 @@ public class User {
         this.password = password;
     }
 
+    public List<Property> getProperties() {
+        return properties;
+    }
 
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+    public User orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
 }

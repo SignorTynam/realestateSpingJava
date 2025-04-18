@@ -16,12 +16,48 @@
                     <p>This is your profile page.</p>
                     <div class="d-grid mt-3">
                         <form th:action="@{/logout}" method="post">
-                        <!-- Thymeleaf will expose the CSRF attributes here -->
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <button type="submit" class="btn btn-danger">Logout</button>
                         </form>
                     </div>
-                  </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3>Your Properties</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="property : ${properties}">
+                            <strong th:text="${property.name}"></strong>: <span th:text="${property.description}"></span> - $<span th:text="${property.price}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h3>Add a New Property</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/properties/add}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Property Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Property</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
