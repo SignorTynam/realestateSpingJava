@@ -1,3 +1,4 @@
+// src/main/java/com/realestate/realestate/controller/AuthController.java
 package com.realestate.realestate.controller;
 
 import com.realestate.realestate.model.User;
@@ -5,35 +6,35 @@ import com.realestate.realestate.model.Property;
 import com.realestate.realestate.repository.UserRepository;
 import com.realestate.realestate.service.PropertyService;
 import com.realestate.realestate.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 public class AuthController {
+
     private final UserService userService;
+    private final PropertyService propertyService;
+    private final UserRepository userRepository;
 
     @Autowired
-    private PropertyService propertyService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(UserService userService,
+                          PropertyService propertyService,
+                          UserRepository userRepository) {
+        this.userService     = userService;
+        this.propertyService = propertyService;
+        this.userRepository  = userRepository;
     }
 
     @GetMapping("/signup")
@@ -43,42 +44,55 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute User user) {
+    public String signupSubmit(
+            @Valid @ModelAttribute("user") User user,
+            BindingResult bindingResult
+    ) {
+        // password match check
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", "error.user", "Passwords do not match");
+        }
+        // existing username/email check (optional)
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            bindingResult.rejectValue("username", "error.user", "Username already taken");
+        }
+        if (bindingResult.hasErrors()) {
+            return "signup";
+        }
         userService.register(user);
         return "redirect:/login";
     }
 
     @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @GetMapping("/profile")
-    public String profile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
+    public String login(@RequestParam(value="error", required=false) String error,
+                        Model model) {
+        if (error != null) {
+            model.addAttribute("error", "Invalid username or password");
         }
-
-        List<Property> properties = propertyService.getPropertiesByUser(user);
-        model.addAttribute("username", username);
-        model.addAttribute("properties", properties);
-
-        return "profile";
+        return "login";
     }
 
     @GetMapping("/login-error")
     public String loginError(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession(false);
-        String errorMessage = null;
         if (session != null) {
             Exception ex = (Exception) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-            if (ex != null) {
-                errorMessage = "Invalid username or password.";
-            }
+            model.addAttribute("error", ex != null ? ex.getMessage() : "Login failed");
         }
-        model.addAttribute("error", errorMessage);
         return "login";
+    }
+
+    @GetMapping("/profile")
+    public String profile(@AuthenticationPrincipal UserDetails userDetails,
+                          Model model) {
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+        List<Property> properties = propertyService.getPropertiesByUser(user);
+        model.addAttribute("username", username);
+        model.addAttribute("properties", properties);
+        return "profile";
     }
 }
