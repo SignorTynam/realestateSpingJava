@@ -31,6 +31,12 @@
                     <ul class="list-group">
                         <li class="list-group-item" th:each="property : ${properties}">
                             <strong th:text="${property.name}"></strong>: <span th:text="${property.description}"></span> - $<span th:text="${property.price}"></span>
+                            <form th:action="@{/properties/{id}/delete(id=${property.id})}" 
+                                  method="post" 
+                                  onsubmit="return confirm('Sei sicuro di voler eliminare questa proprietà?');">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Elimina</button>
+                            </form>
                         </li>
                     </ul>
                 </div>

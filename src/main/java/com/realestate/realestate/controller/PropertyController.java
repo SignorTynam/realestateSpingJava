@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -63,4 +64,13 @@ public class PropertyController {
 
         return "redirect:/properties";
     }
+
+    @PostMapping("/properties/{id}/delete")
+    public String deleteProperty(@PathVariable("id") Long id,
+                                 @AuthenticationPrincipal UserDetails userDetails) {
+        // (opzionale) controllo di possesso: carica l’user e verifica che id appartenga a lui
+        propertyService.deleteProperty(id);
+        return "redirect:/properties";
+    }
+
 }
