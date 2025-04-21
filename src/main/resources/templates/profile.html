@@ -28,7 +28,10 @@
                     <h3>Your Properties</h3>
                 </div>
                 <div class="card-body">
-                    <ul class="list-group">
+                    <div th:if="${properties.empty}" class="alert alert-info">
+                        You have no properties listed. Add a new property below.
+                    </div>
+                    <ul class="list-group" th:if="${!properties.empty}">
                         <li class="list-group-item" th:each="property : ${properties}">
                             <strong th:text="${property.name}"></strong>: <span th:text="${property.description}"></span> - $<span th:text="${property.price}"></span>
                             <form th:action="@{/properties/{id}/delete(id=${property.id})}" 

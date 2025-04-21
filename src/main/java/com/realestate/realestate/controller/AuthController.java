@@ -1,8 +1,14 @@
 package com.realestate.realestate.controller;
 
 import com.realestate.realestate.model.User;
+import com.realestate.realestate.model.Property;
+import com.realestate.realestate.repository.UserRepository;
+import com.realestate.realestate.service.PropertyService;
 import com.realestate.realestate.service.UserService;
-import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
@@ -14,9 +20,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import java.util.List;
+
 @Controller
 public class AuthController {
     private final UserService userService;
+
+    @Autowired
+    private PropertyService propertyService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -40,9 +54,17 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("username", auth.getName());
+    public String profile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        List<Property> properties = propertyService.getPropertiesByUser(user);
+        model.addAttribute("username", username);
+        model.addAttribute("properties", properties);
+
         return "profile";
     }
 
