@@ -2,125 +2,105 @@ package com.realestate.realestate.controller;
 
 import com.realestate.realestate.model.Property;
 import com.realestate.realestate.model.User;
-import com.realestate.realestate.service.PropertyService;
 import com.realestate.realestate.repository.UserRepository;
+import com.realestate.realestate.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
+@RequestMapping("/properties")
 public class PropertyController {
 
-    @Autowired
-    private PropertyService propertyService;
+    private final PropertyService propertyService;
+    private final UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @GetMapping("/properties")
-    public String viewProperties(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        String username = userDetails.getUsername();
-
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
-        }
-
-        List<Property> properties = propertyService.getPropertiesByUser(user);
-        model.addAttribute("properties", properties);
-        model.addAttribute("username", username);
-
-        return "profile";
+    public PropertyController(PropertyService propertyService,
+                              UserRepository userRepository) {
+        this.propertyService = propertyService;
+        this.userRepository  = userRepository;
     }
 
-    @PostMapping("/properties/add")
-    public String addProperty(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestParam String name,
-                              @RequestParam String description,
-                              @RequestParam Double price) {
-
-        String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
-        }
-
-        // build and save
-        Property property = new Property();
-        property.setName(name);
-        property.setDescription(description);
-        property.setPrice(price);
-        property.setUser(user);
-        propertyService.addProperty(property);
-
-        return "redirect:/properties";
-    }
-
-    @PostMapping("/properties/{id}/delete")
-    public String deleteProperty(@PathVariable("id") Long id,
-                                 @AuthenticationPrincipal UserDetails userDetails) {
-        // (opzionale) controllo di possesso: carica l’user e verifica che id appartenga a lui
-        propertyService.deleteProperty(id);
-        return "redirect:/properties";
-    }
-
-    @GetMapping("/properties/{id}/edit")
-    public String editPropertyForm(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
-        }
-
-        Property property = propertyService.getPropertyById(id);
-        if (property == null || !property.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("Property not found or access denied");
-        }
-
-        model.addAttribute("property", property);
-        return "edit-property";
-    }
-
-    @PostMapping("/properties/{id}/edit")
-    public String editProperty(@PathVariable("id") Long id,
-                                @RequestParam String name,
-                                @RequestParam String description,
-                                @RequestParam Double price,
-                                @AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found: " + username);
-        }
-
-        Property property = propertyService.getPropertyById(id);
-        if (property == null || !property.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("Property not found or access denied");
-        }
-
-        property.setName(name);
-        property.setDescription(description);
-        property.setPrice(price);
-        propertyService.updateProperty(property);
-
-        return "redirect:/properties";
-    }
-
+    /** 
+     * Show the logged‑in user’s properties at GET /properties 
+     */
     @GetMapping
-    public String list(@AuthenticationPrincipal UserDetails ud, Model model) {
+    public String viewProperties(@AuthenticationPrincipal UserDetails ud,
+                                 Model model) {
         User user = userRepository.findByUsername(ud.getUsername());
-        model.addAttribute("properties", propertyService.getPropertiesByUser(user));
+        List<Property> props = propertyService.getPropertiesByUser(user);
+        model.addAttribute("properties", props);
         model.addAttribute("username", ud.getUsername());
         return "profile";
     }
 
+    /** 
+     * Add a new property via POST /properties/add 
+     */
+    @PostMapping("/add")
+    public String addProperty(@AuthenticationPrincipal UserDetails ud,
+                              @RequestParam String name,
+                              @RequestParam String description,
+                              @RequestParam Double price) {
+        User user = userRepository.findByUsername(ud.getUsername());
+        Property p = new Property();
+        p.setName(name);
+        p.setDescription(description);
+        p.setPrice(price);
+        p.setUser(user);
+        propertyService.addProperty(p);
+        return "redirect:/properties";
+    }
+
+    /** 
+     * Delete a property via POST /properties/{id}/delete 
+     */
+    @PostMapping("/{id}/delete")
+    public String deleteProperty(@PathVariable Long id) {
+        propertyService.deleteProperty(id);
+        return "redirect:/properties";
+    }
+
+    /** 
+     * Show edit form via GET /properties/{id}/edit 
+     */
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id,
+                           @AuthenticationPrincipal UserDetails ud,
+                           Model model) {
+        User user = userRepository.findByUsername(ud.getUsername());
+        Property p = propertyService.getPropertyById(id);
+        if (p == null || !p.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Access denied or property not found");
+        }
+        model.addAttribute("property", p);
+        return "edit-property";
+    }
+
+    /** 
+     * Process edit via POST /properties/{id}/edit 
+     */
+    @PostMapping("/{id}/edit")
+    public String editProperty(@PathVariable Long id,
+                               @AuthenticationPrincipal UserDetails ud,
+                               @RequestParam String name,
+                               @RequestParam String description,
+                               @RequestParam Double price) {
+        User user = userRepository.findByUsername(ud.getUsername());
+        Property p = propertyService.getPropertyById(id);
+        if (p == null || !p.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Access denied or property not found");
+        }
+        p.setName(name);
+        p.setDescription(description);
+        p.setPrice(price);
+        propertyService.updateProperty(p);
+        return "redirect:/properties";
+    }
 }

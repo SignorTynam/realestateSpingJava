@@ -33,4 +33,8 @@ public class PropertyService {
     public Property updateProperty(Property property) {
         return propertyRepository.save(property);
     }
+
+    public List<Property> getAllProperties() {
+        return propertyRepository.findAll();
+    }
 }

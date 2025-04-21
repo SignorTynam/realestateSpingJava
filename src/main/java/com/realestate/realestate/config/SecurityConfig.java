@@ -22,7 +22,7 @@ public class SecurityConfig {
 
     public SecurityConfig(UserDetailsService uds, PasswordEncoder pe) {
         this.userDetailsService = uds;
-        this.passwordEncoder = pe;
+        this.passwordEncoder    = pe;
     }
 
     @Bean
@@ -33,7 +33,6 @@ public class SecurityConfig {
         return auth;
     }
 
-    // Expose the AuthenticationManager from the shared AuthenticationConfiguration
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -45,10 +44,12 @@ public class SecurityConfig {
           .authenticationProvider(authenticationProvider())
           .authorizeHttpRequests(auth -> auth
               .requestMatchers(
+                  "/",            // ← allow root
+                  "/main",        // ← allow /main
                   "/signup",
                   "/css/**",
-                  "/error",      // <-- allow Spring’s error handler
-                  "/error/**"    // <-- in case you have static/error assets
+                  "/error",
+                  "/error/**"
               ).permitAll()
               .anyRequest().authenticated()
           )
@@ -63,11 +64,11 @@ public class SecurityConfig {
               .logoutSuccessUrl("/login")
               .invalidateHttpSession(true)
               .deleteCookies("JSESSIONID")
-              .addLogoutHandler((request, response, authentication) -> {
-                  logger.info("User logged out: {}", authentication != null ? authentication.getName() : "Anonymous");
-              })
-              .permitAll());
-
+              .addLogoutHandler((request, response, authentication) ->
+                  logger.info("User logged out: {}",
+                              authentication != null ? authentication.getName() : "Anonymous"))
+              .permitAll()
+          );
         return http.build();
     }
 }
