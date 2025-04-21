@@ -25,4 +25,12 @@ public class PropertyService {
     public void deleteProperty(Long propertyId) {
         propertyRepository.deleteById(propertyId);
     }
+
+    public Property getPropertyById(Long id) {
+        return propertyRepository.findById(id).orElse(null);
+    }
+
+    public Property updateProperty(Property property) {
+        return propertyRepository.save(property);
+    }
 }

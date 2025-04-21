@@ -73,4 +73,54 @@ public class PropertyController {
         return "redirect:/properties";
     }
 
+    @GetMapping("/properties/{id}/edit")
+    public String editPropertyForm(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        Property property = propertyService.getPropertyById(id);
+        if (property == null || !property.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Property not found or access denied");
+        }
+
+        model.addAttribute("property", property);
+        return "edit-property";
+    }
+
+    @PostMapping("/properties/{id}/edit")
+    public String editProperty(@PathVariable("id") Long id,
+                                @RequestParam String name,
+                                @RequestParam String description,
+                                @RequestParam Double price,
+                                @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        Property property = propertyService.getPropertyById(id);
+        if (property == null || !property.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Property not found or access denied");
+        }
+
+        property.setName(name);
+        property.setDescription(description);
+        property.setPrice(price);
+        propertyService.updateProperty(property);
+
+        return "redirect:/properties";
+    }
+
+    @GetMapping
+    public String list(@AuthenticationPrincipal UserDetails ud, Model model) {
+        User user = userRepository.findByUsername(ud.getUsername());
+        model.addAttribute("properties", propertyService.getPropertiesByUser(user));
+        model.addAttribute("username", ud.getUsername());
+        return "profile";
+    }
+
 }

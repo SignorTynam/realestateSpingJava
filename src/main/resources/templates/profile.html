@@ -76,13 +76,20 @@
                                                 $<span th:text="${#numbers.formatDecimal(property.price, 1, 2)}"></span>
                                             </div>
                                         </div>
-                                        <form th:action="@{/properties/{id}/delete(id=${property.id})}" method="post">
+                                        <div class="d-flex">
+                                            <form th:action="@{/properties/{id}/delete(id=${property.id})}" method="post">
                                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                             <button type="submit" class="btn btn-link text-danger p-0">
                                                 <i class="bi bi-trash fs-5"></i>
                                             </button>
-                                        </form>
-                                    </div>
+                                            </form>
+                                        
+                                            <a th:href="@{/properties/{id}/edit(id=${property.id})}"
+                                            class="btn btn-link text-primary p-0 ms-2">
+                                            <i class="bi bi-pencil fs-5"></i>
+                                            </a>
+                                        </div>
+                                      </div>
                                 </div>
                             </div>
                         </div>
