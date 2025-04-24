@@ -127,9 +127,9 @@
                       <div class="price-tag" th:text="'$' + ${#numbers.formatDecimal(property.price, 1, 2)}"></div>
                       <small class="text-muted">Listed by: <span th:text="${property.user.username}"></span></small>
                     </div>
-                    <a href="#" class="btn btn-outline-primary">
-                      View Details <i class="bi bi-arrow-right"></i>
-                    </a>
+                    <a th:href="@{/properties/{id}(id=${property.id})}" class="btn btn-outline-primary">
+                        View Details <i class="bi bi-arrow-right"></i>
+                      </a>
                   </div>
                 </div>
               </div>

@@ -137,6 +137,5 @@ public class PropertyController {
     
         // redirect back to the photo‐upload/list page
         return "redirect:/properties/" + propertyId + "/photos";
-    }
-    
+    }    
 }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -43,14 +44,18 @@ public class SecurityConfig {
         http
           .authenticationProvider(authenticationProvider())
           .authorizeHttpRequests(auth -> auth
+              // allow anyone to view home, main, static resources, signup, errors...
               .requestMatchers(
-                  "/",            // ← allow root
-                  "/main",        // ← allow /main
+                  "/",            // root
+                  "/main",        // your main page
                   "/signup",
                   "/css/**",
-                  "/error",
+                  "/error",      
                   "/error/**"
               ).permitAll()
+              // allow ANYONE (anonymous too) to GET properties and property‐details
+              .requestMatchers(HttpMethod.GET, "/properties/**").permitAll()
+              // everything else (POST/PUT/DE3LETE) requires login
               .anyRequest().authenticated()
           )
           .formLogin(form -> form
