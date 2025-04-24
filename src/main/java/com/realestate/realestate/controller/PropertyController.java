@@ -110,6 +110,9 @@ public class PropertyController {
         return "redirect:/properties";
     }
 
+    /** 
+     * Show property details via GET /properties/{id} 
+     */
     @GetMapping("/{id}/photos")
     public String photoForm(@PathVariable Long id, Model model) {
         Property p = propertyService.getPropertyById(id);
@@ -119,7 +122,9 @@ public class PropertyController {
         return "upload-photo";
     }
 
-    /** Handle file upload */
+    /** 
+     * Process photo upload via POST /properties/{id}/photos 
+     */
     @PostMapping("/{id}/photos")
     public String handlePhotoUpload(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         Property p = propertyService.getPropertyById(id);
@@ -127,19 +132,23 @@ public class PropertyController {
         return "redirect:/properties/" + id + "/photos";
     }
 
+    /** 
+     * Delete a photo via POST /properties/{propertyId}/photos/{photoId}/delete 
+     */
     @PostMapping("/{propertyId}/photos/{photoId}/delete")
     public String deletePhoto(
             @PathVariable Long propertyId,
             @PathVariable Long photoId,
             @AuthenticationPrincipal UserDetails ud) {
     
-        // (optional) verify ownership: load property and check ud.getUsername() equals owner
         photoService.deletePhoto(photoId);
     
-        // redirect back to the photo‐upload/list page
         return "redirect:/properties/" + propertyId + "/photos";
     }
 
+    /** 
+     * Show property details via GET /properties/{id} 
+     */
     @PostMapping("/{id}/inquire")
     public String submitInquiry(
             @PathVariable Long id,

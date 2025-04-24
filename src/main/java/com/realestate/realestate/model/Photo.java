@@ -9,7 +9,6 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // e.g. "/uploads/uuid-filename.jpg"
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)

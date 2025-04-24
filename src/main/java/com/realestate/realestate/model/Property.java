@@ -24,8 +24,6 @@ public class Property {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos = new ArrayList<>();
 
-
-    // Getters and setters
     public Long getId() {
         return id;
     }

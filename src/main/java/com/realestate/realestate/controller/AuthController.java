@@ -48,11 +48,9 @@ public class AuthController {
             @Valid @ModelAttribute("user") User user,
             BindingResult bindingResult
     ) {
-        // password match check
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             bindingResult.rejectValue("confirmPassword", "error.user", "Passwords do not match");
         }
-        // existing username/email check (optional)
         if (userRepository.findByUsername(user.getUsername()) != null) {
             bindingResult.rejectValue("username", "error.user", "Username already taken");
         }

@@ -55,7 +55,6 @@
                     <form th:action="@{/signup}" th:object="${user}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-                        <!-- Username -->
                         <div class="mb-4 position-relative">
                             <i class="bi bi-person-fill input-icon"></i>
                             <input type="text" 
@@ -64,7 +63,6 @@
                                    placeholder="Enter username" required>
                         </div>
 
-                        <!-- Email -->
                         <div class="mb-4 position-relative">
                             <i class="bi bi-envelope-fill input-icon"></i>
                             <input type="email" 
@@ -73,7 +71,6 @@
                                    placeholder="Enter email" required>
                         </div>
 
-                        <!-- Password -->
                         <div class="mb-4 position-relative">
                             <i class="bi bi-lock-fill input-icon"></i>
                             <input type="password" 
@@ -82,7 +79,6 @@
                                    placeholder="Create password" required>
                         </div>
 
-                        <!-- Confirm Password -->
                         <div class="mb-4 position-relative">
                             <i class="bi bi-shield-lock-fill input-icon"></i>
                             <input type="password" 
@@ -91,19 +87,16 @@
                                    placeholder="Confirm password" required>
                         </div>
 
-                        <!-- Display Field Errors -->
                         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
                             <ul class="mb-0">
                                 <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
                             </ul>
                         </div>
 
-                        <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary gradient-btn w-100 py-2 mb-3">
                             Create Account
                         </button>
 
-                        <!-- Social Login -->
                         <div class="text-center text-muted mb-3">Or sign up with</div>
                         <div class="d-flex gap-3 justify-content-center mb-4">
                             <button type="button" class="btn btn-outline-primary rounded-circle p-2">
@@ -117,7 +110,6 @@
                             </button>
                         </div>
 
-                        <!-- Login Link -->
                         <div class="text-center">
                             <span class="text-muted">Already have an account? </span>
                             <a th:href="@{/login}" class="text-decoration-none fw-bold">

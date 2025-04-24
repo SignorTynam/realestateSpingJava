@@ -49,7 +49,6 @@
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <!-- Navigation (reused from main) -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="/">
@@ -79,7 +78,6 @@
 
     <main class="flex-grow-1">
         <div class="container my-5">
-            <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -88,9 +86,7 @@
                 </ol>
             </nav>
 
-            <!-- Property Content -->
             <div class="row g-4">
-                <!-- Image Gallery -->
                 <div class="col-lg-8">
                     <div class="position-relative">
                         <img th:src="${#lists.isEmpty(property.photos) ? '/images/default-property.jpg' : property.photos[0].url}" 
@@ -118,7 +114,6 @@
                     </div>
                 </div>
 
-                <!-- Details Section -->
                 <div class="col-lg-4">
                     <div class="detail-card card mb-4">
                         <div class="card-header bg-white border-0 pb-0">
@@ -134,7 +129,6 @@
                             <div class="mb-4">
                                 <h5 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Location</h5>
                                 <div class="ratio ratio-16x9 bg-light rounded">
-                                    <!-- Map placeholder -->
                                     <div class="d-flex justify-content-center align-items-center text-muted">
                                         <i class="bi bi-map fs-3"></i>
                                     </div>

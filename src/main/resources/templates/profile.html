@@ -27,9 +27,7 @@
 <body class="bg-light">
 <div class="container py-5">
   <div class="row g-4">
-    <!-- Left Column -->
     <div class="col-lg-8">
-      <!-- Profile Card -->
       <div class="card property-card mb-4 hover-shadow">
         <div class="card-header gradient-header text-white d-flex justify-content-between align-items-center">
           <div>
@@ -47,7 +45,6 @@
         </div>
       </div>
 
-      <!-- Properties List -->
       <div class="card property-card hover-shadow">
         <div class="card-header bg-white border-0 py-3">
           <h3 class="mb-0"><i class="bi bi-houses me-2"></i>Your Properties</h3>
@@ -81,14 +78,12 @@
                          class="btn btn-link text-primary p-0 ms-2">
                         <i class="bi bi-pencil fs-5"></i>
                       </a>
-                      <!-- Add Photo button -->
                       <a th:href="@{/properties/{id}/photos(id=${property.id})}"
                          class="btn btn-link text-secondary p-0 ms-2">
                         <i class="bi bi-camera fs-5"></i>
                       </a>
                     </div>
                   </div>
-                  <!-- Photo thumbnails -->
                   <div class="d-flex flex-wrap mb-2" th:if="${property.photos}">
                     <img th:each="photo : ${property.photos}"
                          th:src="@{${photo.url}}"
@@ -104,7 +99,6 @@
       </div>
     </div>
 
-    <!-- Right Column - Add Property Form -->
     <div class="col-lg-4">
       <div class="card property-card hover-shadow">
         <div class="card-header bg-white border-0 py-3">

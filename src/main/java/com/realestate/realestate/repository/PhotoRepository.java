@@ -1,4 +1,3 @@
-// src/main/java/com/realestate/realestate/repository/PhotoRepository.java
 package com.realestate.realestate.repository;
 
 import com.realestate.realestate.model.Photo;
