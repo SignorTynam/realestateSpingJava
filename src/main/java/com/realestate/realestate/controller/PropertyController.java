@@ -126,4 +126,17 @@ public class PropertyController {
         return "redirect:/properties/" + id + "/photos";
     }
 
+    @PostMapping("/{propertyId}/photos/{photoId}/delete")
+    public String deletePhoto(
+            @PathVariable Long propertyId,
+            @PathVariable Long photoId,
+            @AuthenticationPrincipal UserDetails ud) {
+    
+        // (optional) verify ownership: load property and check ud.getUsername() equals owner
+        photoService.deletePhoto(photoId);
+    
+        // redirect back to the photo‐upload/list page
+        return "redirect:/properties/" + propertyId + "/photos";
+    }
+    
 }

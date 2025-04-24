@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -55,4 +56,13 @@ public class PhotoService {
     public List<Photo> getPhotosForProperty(Long propertyId) {
         return photoRepo.findByPropertyId(propertyId);
     }
+
+    /** Delete the photo record (and you may manually delete the file if desired) */
+    public void deletePhoto(Long photoId) {
+        if (!photoRepo.existsById(photoId)) {
+            throw new NoSuchElementException("Photo not found: " + photoId);
+        }
+        photoRepo.deleteById(photoId);
+    }
+
 }
