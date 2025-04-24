@@ -1,5 +1,8 @@
 package com.realestate.realestate.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +20,10 @@ public class Property {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Photo> photos = new ArrayList<>();
+
 
     // Getters and setters
     public Long getId() {
@@ -58,4 +65,9 @@ public class Property {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public List<Photo> getPhotos() { return photos; }
+    
+    public void setPhotos(List<Photo> photos) { this.photos = photos; }
+
 }
