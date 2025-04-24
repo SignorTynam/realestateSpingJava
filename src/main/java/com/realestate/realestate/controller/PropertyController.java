@@ -4,6 +4,7 @@ import com.realestate.realestate.model.Photo;
 import com.realestate.realestate.model.Property;
 import com.realestate.realestate.model.User;
 import com.realestate.realestate.repository.UserRepository;
+import com.realestate.realestate.service.InterviewRequestService;
 import com.realestate.realestate.service.PhotoService;
 import com.realestate.realestate.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ public class PropertyController {
     @Autowired private PropertyService propertyService;
     @Autowired private UserRepository userRepository;
     @Autowired private PhotoService photoService;
+    @Autowired private InterviewRequestService inquiryService;
 
     @Autowired
-    public PropertyController(PropertyService propertyService,
-                              UserRepository userRepository) {
+    public PropertyController(PropertyService propertyService, UserRepository userRepository) {
         this.propertyService = propertyService;
         this.userRepository  = userRepository;
     }
@@ -137,5 +138,21 @@ public class PropertyController {
     
         // redirect back to the photo‐upload/list page
         return "redirect:/properties/" + propertyId + "/photos";
-    }    
+    }
+
+    @PostMapping("/{id}/inquire")
+    public String submitInquiry(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String phone,
+            @RequestParam String message,
+            Model model) {
+
+        Property p = propertyService.getPropertyById(id);
+        inquiryService.save(p, name, email, phone, message);
+        model.addAttribute("property", p);
+        model.addAttribute("inquirySent", true);
+        return "property-details";
+    }
 }

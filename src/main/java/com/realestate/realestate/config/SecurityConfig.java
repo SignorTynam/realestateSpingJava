@@ -44,19 +44,9 @@ public class SecurityConfig {
         http
           .authenticationProvider(authenticationProvider())
           .authorizeHttpRequests(auth -> auth
-              // allow anyone to view home, main, static resources, signup, errors...
-              .requestMatchers(
-                  "/",            // root
-                  "/main",        // your main page
-                  "/signup",
-                  "/css/**",
-                  "/error",      
-                  "/error/**",
-                  "/upload/**"
-              ).permitAll()
-              // allow ANYONE (anonymous too) to GET properties and property‐details
+              .requestMatchers("/", "/main","/signup","/css/**","/error/**","/upload/**").permitAll()
               .requestMatchers(HttpMethod.GET, "/properties/**").permitAll()
-              // everything else (POST/PUT/DE3LETE) requires login
+              .requestMatchers(HttpMethod.POST, "/properties/*/inquire").permitAll()   // ← allow form submit
               .anyRequest().authenticated()
           )
           .formLogin(form -> form
