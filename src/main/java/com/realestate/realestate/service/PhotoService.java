@@ -48,7 +48,7 @@ public class PhotoService {
         }
 
         // record URL (served via /uploads/**)
-        String url = "/uploads/" + filename;
+        String url = "/upload/" + filename;
         Photo photo = new Photo(url, property);
         return photoRepo.save(photo);
     }

@@ -51,7 +51,8 @@ public class SecurityConfig {
                   "/signup",
                   "/css/**",
                   "/error",      
-                  "/error/**"
+                  "/error/**",
+                  "/upload/**"
               ).permitAll()
               // allow ANYONE (anonymous too) to GET properties and property‐details
               .requestMatchers(HttpMethod.GET, "/properties/**").permitAll()
