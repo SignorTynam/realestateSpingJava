@@ -1,4 +1,3 @@
-// src/main/java/com/realestate/realestate/config/MvcConfig.java
 package com.realestate.realestate.config;
 
 import org.springframework.beans.factory.annotation.Value;
