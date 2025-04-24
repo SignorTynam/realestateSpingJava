@@ -111,28 +111,31 @@
         <h2 class="mb-4">Featured Properties</h2>
         <div class="row g-4">
             <div th:each="property : ${properties}" class="col-md-6 col-lg-4">
-                <div class="card property-card h-100">
-                    <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="Property image">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h5 class="card-title mb-0" th:text="${property.name}"></h5>
-                            <span class="badge bg-primary">For Sale</span>
-                        </div>
-                        <p class="card-text text-muted" th:text="${property.description}"></p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="price-tag" th:text="'$' + ${#numbers.formatDecimal(property.price, 1, 2)}"></div>
-                                <small class="text-muted">Listed by: <span th:text="${property.user.username}"></span></small>
-                            </div>
-                            <a href="#" class="btn btn-outline-primary">
-                                View Details <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
+              <div class="card property-card h-100">
+                <img th:if="${!#lists.isEmpty(property.photos)}"
+                th:src="@{${property.photos[0].url}}"
+                class="card-img-top" alt="Property image"/>
+                     
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0" th:text="${property.name}"></h5>
+                    <span class="badge bg-primary">For Sale</span>
+                  </div>
+                  <p class="card-text text-muted" th:text="${property.description}"></p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <div class="price-tag" th:text="'$' + ${#numbers.formatDecimal(property.price, 1, 2)}"></div>
+                      <small class="text-muted">Listed by: <span th:text="${property.user.username}"></span></small>
                     </div>
+                    <a href="#" class="btn btn-outline-primary">
+                      View Details <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
 
     <!-- Updated Footer -->
     <footer class="bg-light mt-5 py-4">
