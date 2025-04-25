@@ -3,9 +3,11 @@ package com.realestate.realestate.controller;
 
 import com.realestate.realestate.model.User;
 import com.realestate.realestate.model.Property;
+import com.realestate.realestate.model.Message;
 import com.realestate.realestate.repository.UserRepository;
 import com.realestate.realestate.service.PropertyService;
 import com.realestate.realestate.service.UserService;
+import com.realestate.realestate.service.MessageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -27,6 +29,9 @@ public class AuthController {
     private final UserService userService;
     private final PropertyService propertyService;
     private final UserRepository userRepository;
+
+    @Autowired
+    private MessageService messageService; // Service to fetch messages
 
     @Autowired
     public AuthController(UserService userService,
@@ -89,8 +94,11 @@ public class AuthController {
             throw new UsernameNotFoundException("User not found: " + username);
         }
         List<Property> properties = propertyService.getPropertiesByUser(user);
+        List<Message> messages = messageService.getMessagesByUser(user); // Fetch messages
+
         model.addAttribute("username", username);
         model.addAttribute("properties", properties);
+        model.addAttribute("messages", messages); // Add messages to the model
         return "profile";
     }
 }

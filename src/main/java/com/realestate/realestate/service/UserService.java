@@ -43,4 +43,24 @@ public class UserService implements UserDetailsService {
                 .roles("USER")
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return repo.findByUsername(username);
+    }
+
+    public boolean checkPassword(User user, String rawPassword) {
+        return encoder.matches(rawPassword, user.getPassword());
+    }
+
+    @Transactional
+    public void changePassword(User user, String newPassword) {
+        user.setPassword(encoder.encode(newPassword));
+    }
+
+    @Transactional
+    public void updateProfile(User user) {
+        repo.save(user);
+    }
+
 }

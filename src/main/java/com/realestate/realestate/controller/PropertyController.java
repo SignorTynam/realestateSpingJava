@@ -1,5 +1,6 @@
 package com.realestate.realestate.controller;
 
+import com.realestate.realestate.model.InterviewRequest;
 import com.realestate.realestate.model.Photo;
 import com.realestate.realestate.model.Property;
 import com.realestate.realestate.model.User;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -163,5 +165,17 @@ public class PropertyController {
         model.addAttribute("property", p);
         model.addAttribute("inquirySent", true);
         return "property-details";
+    }
+
+    @GetMapping("/messages")
+    public String viewMessages(@AuthenticationPrincipal UserDetails ud, Model model) {
+        User user = userRepository.findByUsername(ud.getUsername());
+        List<Property> properties = propertyService.getPropertiesByUser(user);
+        List<InterviewRequest> messages = new ArrayList<>();
+        for (Property property : properties) {
+            messages.addAll(inquiryService.getMessagesByProperty(property.getId()));
+        }
+        model.addAttribute("messages", messages);
+        return "messages";
     }
 }

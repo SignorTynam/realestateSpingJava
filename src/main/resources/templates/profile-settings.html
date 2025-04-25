@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Settings</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    .card-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .form-control:disabled { background-color: #e9ecef; }
+  </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" href="/"><i class="bi bi-house-heart-fill text-primary me-2"></i>PropertyHub</a>
+    <ul class="navbar-nav ms-auto">
+      <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> <span sec:authentication="name">User</span></a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="/profile">Profile</a></li>
+          <li><a class="dropdown-item" href="/profile/settings">Account Settings</a></li>
+          <li><hr class="dropdown-divider"/></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button class="dropdown-item">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="card mb-5">
+    <div class="card-header">
+      <h3 class="mb-0"><i class="bi bi-gear-fill me-2"></i>Account Settings</h3>
+    </div>
+    <div class="card-body">
+      <!-- feedback -->
+      <div th:if="${success}" class="alert alert-success">Your profile has been updated.</div>
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+      <!-- Edit profile form -->
+      <form th:action="@{/profile/settings}" th:object="${user}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" th:field="*{username}" required/>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" th:field="*{email}" required/>
+        </div>
+
+        <hr/>
+
+        <h5>Change Password</h5>
+
+        <div class="mb-3">
+          <label class="form-label">Current Password</label>
+          <input type="password" class="form-control" name="currentPassword" required/>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">New Password</label>
+          <input type="password" class="form-control" name="newPassword" minlength="6" required/>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" class="form-control" name="confirmPassword" minlength="6" required/>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
