@@ -17,12 +17,18 @@ public class Property {
     private String description;
     private Double price;
 
+    @Column(nullable = true)
+    private String location;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -54,6 +60,14 @@ public class Property {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public User getUser() {

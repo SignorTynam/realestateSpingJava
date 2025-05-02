@@ -3,6 +3,7 @@ package com.realestate.realestate.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name="messages")
 public class Message {
 
     @Id
@@ -12,6 +13,10 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "property_id", nullable = false)
+    private Property property;
 
     private String content;
 

@@ -2,10 +2,12 @@ package com.realestate.realestate.service;
 
 import com.realestate.realestate.model.Property;
 import com.realestate.realestate.model.User;
+import com.realestate.realestate.repository.MessageRepository;
 import com.realestate.realestate.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -14,8 +16,12 @@ public class PropertyService {
     @Autowired
     private PropertyRepository propertyRepository;
 
+    @Autowired
+    private MessageRepository messageRepository;
+
     public List<Property> getPropertiesByUser(User user) {
-        return propertyRepository.findByUserId(user.getId());
+        List<Property> properties = propertyRepository.findByUserId(user.getId());
+        return properties != null ? properties : Collections.emptyList();
     }
 
     public Property addProperty(Property property) {
@@ -23,6 +29,7 @@ public class PropertyService {
     }
 
     public void deleteProperty(Long propertyId) {
+        messageRepository.deleteByPropertyId(propertyId);
         propertyRepository.deleteById(propertyId);
     }
 

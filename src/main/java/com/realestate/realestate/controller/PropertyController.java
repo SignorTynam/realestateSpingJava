@@ -43,8 +43,16 @@ public class PropertyController {
                                  Model model) {
         User user = userRepository.findByUsername(ud.getUsername());
         List<Property> props = propertyService.getPropertiesByUser(user);
+
+        // Fetch all inquiries for these properties to display message count
+        List<InterviewRequest> messages = new ArrayList<>();
+        for (Property property : props) {
+            messages.addAll(inquiryService.getMessagesByProperty(property.getId()));
+        }
+
         model.addAttribute("properties", props);
         model.addAttribute("username", ud.getUsername());
+        model.addAttribute("messages", messages);
         return "profile";
     }
 
@@ -55,12 +63,14 @@ public class PropertyController {
     public String addProperty(@AuthenticationPrincipal UserDetails ud,
                               @RequestParam String name,
                               @RequestParam String description,
-                              @RequestParam Double price) {
+                              @RequestParam Double price,
+                              @RequestParam String location) {
         User user = userRepository.findByUsername(ud.getUsername());
         Property p = new Property();
         p.setName(name);
         p.setDescription(description);
         p.setPrice(price);
+        p.setLocation(location);
         p.setUser(user);
         propertyService.addProperty(p);
         return "redirect:/properties";

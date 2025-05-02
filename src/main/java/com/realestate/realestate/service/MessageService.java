@@ -6,6 +6,7 @@ import com.realestate.realestate.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,6 +20,7 @@ public class MessageService {
     }
 
     public List<Message> getMessagesByUser(User user) {
-        return messageRepository.findByUser(user);
+        List<Message> messages = messageRepository.findByUser(user);
+        return messages != null ? messages : Collections.emptyList();
     }
 }
