@@ -79,28 +79,37 @@
     <div class="hero-section text-white">
         <div class="container text-center">
             <h1 class="display-4 mb-4">Find Your Perfect Property</h1>
-            <div class="search-container">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg" placeholder="Search properties...">
-                    <button class="btn btn-primary" type="button">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-                <div class="d-flex justify-content-center gap-2">
-                    <select class="form-select w-25">
-                        <option>Price Range</option>
-                        <option>$0 - $100,000</option>
-                        <option>$100,000 - $500,000</option>
-                        <option>$500,000+</option>
-                    </select>
-                    <select class="form-select w-25">
-                        <option>Property Type</option>
-                        <option>House</option>
-                        <option>Apartment</option>
-                        <option>Commercial</option>
-                    </select>
-                </div>
+            <!-- 1) Shtojmë form me th:action dhe method="get" -->
+            <form th:action="@{/properties/search}" method="get" class="search-container">
+            <div class="input-group mb-3">
+                <!-- 2) shtojmë name="query" dhe th:value për të ruajtur vlerën pas postimit -->
+                <input
+                type="text"
+                name="query"
+                th:value="${param.query}"
+                class="form-control form-control-lg"
+                placeholder="Search properties..."
+                >
+                <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i>
+                </button>
             </div>
+            <div class="d-flex justify-content-center gap-2">
+                <!-- 3) name për select dhe th:selected për të zgjedhur opsionin aktual -->
+                <select name="priceRange" class="form-select w-25" th:value="${param.priceRange}">
+                <option value="">Price Range</option>
+                <option value="0-100000" th:selected="${param.priceRange=='0-100000'}">$0 – $100,000</option>
+                <option value="100000-500000" th:selected="${param.priceRange=='100000-500000'}">$100,000 – $500,000</option>
+                <option value="500000+" th:selected="${param.priceRange=='500000+'}">$500,000 +</option>
+                </select>
+                <select name="type" class="form-select w-25" th:value="${param.type}">
+                <option value="">Property Type</option>
+                <option value="House" th:selected="${param.type=='House'}">House</option>
+                <option value="Apartment" th:selected="${param.type=='Apartment'}">Apartment</option>
+                <option value="Commercial" th:selected="${param.type=='Commercial'}">Commercial</option>
+                </select>
+            </div>
+            </form>
         </div>
     </div>
 

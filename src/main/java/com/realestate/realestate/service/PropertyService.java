@@ -44,4 +44,8 @@ public class PropertyService {
     public List<Property> getAllProperties() {
         return propertyRepository.findAll();
     }
+
+public List<Property> search(String query, Double minPrice, Double maxPrice, String type) {
+    return propertyRepository.search(query, minPrice, maxPrice, type);
+}
 }

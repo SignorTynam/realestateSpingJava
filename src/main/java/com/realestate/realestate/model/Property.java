@@ -30,6 +30,9 @@ public class Property {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
 
+    @Column(nullable = true)
+    private String type;
+    
     public Long getId() {
         return id;
     }
@@ -77,6 +80,14 @@ public class Property {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getType() {
+    return type;
+}
+
+public void setType(String type) {
+    this.type = type;
+}
 
     public List<Photo> getPhotos() { return photos; }
     

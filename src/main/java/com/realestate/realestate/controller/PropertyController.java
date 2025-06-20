@@ -188,4 +188,33 @@ public class PropertyController {
         model.addAttribute("messages", messages);
         return "messages";
     }
+
+@GetMapping("/search")
+public String searchProperties(@RequestParam(required = false) String query,
+                               @RequestParam(required = false) String priceRange,
+                               @RequestParam(required = false) String type,
+                               Model model) {
+    Double minPrice = null;
+    Double maxPrice = null;
+
+    if (priceRange != null && !priceRange.isBlank()) {
+        if (priceRange.equals("$0 - $100,000")) {
+            minPrice = 0.0;
+            maxPrice = 100000.0;
+        } else if (priceRange.equals("$100,000 - $500,000")) {
+            minPrice = 100000.0;
+            maxPrice = 500000.0;
+        } else if (priceRange.equals("$500,000+")) {
+            minPrice = 500000.0;
+        }
+    }
+
+    // Nëse lëshohet fushë e zbrazët, trajtoje si null
+    if (type != null && type.isBlank()) type = null;
+    if (query != null && query.isBlank()) query = null;
+
+    List<Property> properties = propertyService.search(query, minPrice, maxPrice, type);
+    model.addAttribute("properties", properties);
+    return "search-results"; // ose emri i template-it tënd
+}
 }
